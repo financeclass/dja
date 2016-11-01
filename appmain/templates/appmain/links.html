@@ -1,0 +1,117 @@
+{% extends 'appmain/base.html' %}
+{% load markdown_deux_tags %}
+{% block title %}links{% endblock %}
+{% block css %}
+
+    <style type="text/css">
+        .linkcard {
+            background: rgba(249, 250, 250, 0.91) url('/static/appmain/ss.jpg') repeat;
+            box-shadow: 2px 2px rgba(173, 173, 173, 0.36);
+
+        }
+
+        .favbotton {
+            text-align: right;
+            font-size: 0.9em;
+        }
+    </style>
+
+{% endblock %}
+
+
+
+{% block content %}
+    <br>
+    {% if type == 'mylinks' %}
+        <div class="row">
+            <div class="col-sm-12" style="margin-bottom: 10px">
+                <div class="btn-group btn-group-lg">
+                    <button type="button" class="btn btn-default disabled">全部文件</button>
+                    <button type="button" class="btn btn-default disabled">文件夹1</button>
+                    <button type="button" class="btn btn-default disabled">文件夹2</button>
+                    <button type="button" class="btn btn-default disabled">新建文件夹</button>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-12" style="margin-bottom: 10px">
+            <div class="btn-group btn-group-md" style="float: left">
+                <button type="button" class="btn btn-default disabled">tag1</button>
+                <button type="button" class="btn btn-default disabled">tag2</button>
+                <button type="button" class="btn btn-default disabled">tag3</button>
+            </div>
+            {% if type == 'mylinks' %}
+                <div class="dropdown  " style="float: right">
+                    <button type="button" class="btn dropdown-toggle btn-default"
+                            id="dropdownMenu1" data-toggle="dropdown">排序
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">访问时间</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">修改时间</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">创建时间</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">标题</a>
+                        </li>
+                    </ul>
+                </div>{% else %}
+                <div class="dropdown  " style="float: right">
+                    <button type="button" class="btn dropdown-toggle btn-default"
+                            id="dropdownMenu1" data-toggle="dropdown">排序
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">热门</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">最新</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">随机</a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12 linkcard">
+            {% for aa in linklist %}
+                <h2>   {{ aa.title }}</h2>
+                <p>{% if aa.url %}<a href="{{ aa.url }}"
+                                     target="_blank">{{ aa.url|cut:"https://"|cut:"http://"|cut:"www."|slice:'20' }}</a>{% else %}{% endif %}
+                </p>
+                {{ aa.content|markdown|truncatewords_html:"3" }}
+                <p class="  favbotton text-muted">
+                    {% if type == 'mylinks' %}
+                        <a href="/detail/?linkid={{ aa.id }}">详情</a>&nbsp;&nbsp;
+                        <a href="/mark/?linkid={{ aa.id }}&edit=1">修改</a>&nbsp;&nbsp;
+                        <a href="/delete/?linkid={{ aa.id }}">删除</a>
+                    {% else %}
+                        <a href="/detail/?linkid={{ aa.id }}">详情</a>&nbsp;&nbsp;
+                        <a href="/mark/?linkid={{ aa.id }}">收藏</a>
+                    {% endif %}
+                </p>
+                <hr>
+            {% empty %}
+                <h3> 什么也没有找到</h3>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
