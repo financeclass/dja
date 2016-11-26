@@ -1,11 +1,91 @@
 {% extends 'appmain/base.html' %}
-
+{% load my_tags %}
 {% block title %}space{% endblock %}
 {% block css %}
+    <style type="text/css">
+
+
+        .mcard {
+            background: rgba(249, 250, 250, 0.91) url('/static/appmain/boxpic.jpg') repeat;
+            box-shadow: 2px 2px rgba(173, 173, 173, 0.36);
+            padding: 0 7px;
+            margin: 5px;
+        }
+
+        .mtitle {
+            text-align: center;
+
+            padding-top: 19px;
+            padding-bottom: 13px;
+        }
+
+        .more {
+            text-align: right;
+            position: relative;
+            top: -13px;
+            right: 11px;
+        }
+
+
+    </style>
 {% endblock %}
 
 
 
 {% block content %}
-    <p>邮件、关注、消息、历史等</p>
+
+    <div class="row">
+        <div class="col-sm-4  ">
+            <div class=" mcard">
+                <h4 class="mtitle"><a href="#"
+                                      class="novisit"><i
+                        class="fa fa-calendar-check-o fa-fw"></i>&nbsp;&nbsp;TODO
+                </a></h4>
+
+                <p>开发中… </p>
+
+                <p>事项一 </p>
+
+                <p>事项二 </p>
+                <a href="#" style="color: #7b7b7b">
+                    <div>
+                        <div class="more"><i class="fa  fa-angle-right fa-fw"></i></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4  ">
+            <div class=" mcard">
+                <h4 class="mtitle"><a href="#"
+                                      class="novisit"><i
+                        class="fa fa-gear fa-fw"></i>&nbsp;&nbsp;设置
+                </a></h4>
+
+                <p><a href="/profileset/">首页布局 </a></p>
+
+                <a href="#" style="color: #7b7b7b">
+                    <div>
+                        <div class="more"><i class="fa  fa-angle-right fa-fw"></i></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4  ">
+            <div class=" mcard">
+                <h4 class="mtitle"><a href="#"
+                                      class="novisit"><i
+                        class="fa fa-question fa-fw"></i>&nbsp;&nbsp;Readme
+                </a></h4>
+
+                <p><a href="#">code repository </a></p>
+                <a href="#" style="color: #7b7b7b">
+                    <div>
+                        <div class="more"><i class="fa  fa-angle-right fa-fw"></i></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
 {% endblock %}

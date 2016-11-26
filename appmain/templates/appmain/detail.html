@@ -30,9 +30,10 @@
                 {% if link.user == user %}
                     <a href="/mark/?linkid={{ link.id }}&edit=1" type="button" class="btn btn-default">修改</a>
                     <a href="/delete/?linkid={{ link.id }}" type="button" class="btn btn-default">删除</a>
+                {% elif link.id in hasfav %}
+                    <button type="button" class="btn btn-default  disabled">已收藏</button>
                 {% else %}
                     <a href="/mark/?linkid={{ link.id }}" type="button" class="btn btn-default">收藏</a>
-                    <button type="button" class="btn btn-default  disabled">关注</button>
                 {% endif %}
             </div>
         </div>
@@ -43,8 +44,11 @@
         <div class="col-sm-12 detailcard">
             <h2> {{ link.title }}</h2>
 
-            <p> {% if link.url %}<a href="{{ link.url }}" target="_blank">{{ link.url|cut:"https://"|cut:"http://"|cut:"www."|slice:'20' }}</a>{% else %}{% endif %}</p>
-            <p>  <span class="label label-default">{{ link.user }}</span></p>
+            {% if link.url %}<p><a href="{{ link.url }}"
+                                   target="_blank">{{ link.url|cut:"https://"|cut:"http://"|cut:"www."|slice:'20' }}…<i
+                    class="fa fa-link fa-fw"></i></a></p>{% else %}{% endif %}
+            <p>  <span class="label label-default"><i
+                    class="fa fa-user fa-fw"></i> {{ link.user }}</span></p>
             {{ link.content|markdown }}
         </div>
     </div>

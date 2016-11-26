@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% block title %}mark{% endblock %}
 {% block css %}
+
 {% endblock %}
 
 {# action="/mark/?linkid={{ link.id }}"#}
@@ -12,4 +13,17 @@
         {{ form|crispy }}
         <button type="submit" class="btn btn-default">保存</button>
     </form>
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        var simplemde = new SimpleMDE(
+                {element: document.getElementById("id_content") ,
+                    spellChecker: false}
+        );
+        $(function () {
+            $('input#id_title').focus();
+        });
+    </script>
 {% endblock %}

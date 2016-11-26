@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="2875434932">
+    <data-source source="LOCAL" name="Django default" uuid="c7352fa4-00b6-483d-9820-0774cb8901b9">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <auto-commit>false</auto-commit>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:F:\dja\db.sqlite3</jdbc-url>
+      <libraries />
+    </data-source>
+  </component>
+</project>

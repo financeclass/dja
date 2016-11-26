@@ -8,16 +8,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1 ,maximum-scale=1.0,  user-scalable=no">
     <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
     <link REL="SHORTCUT ICON" HREF="/static/appmain/image/favicon.ico">
-    {#    <link href="//cdn.bootcss.com/bootstrap-material-design/4.0.2/bootstrap-material-design.css" rel="stylesheet">#}
     {#    <link rel="stylesheet" href="/static/appmain/dark.css">#}
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+
+
+    <link href="http://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
+    <script src="http://cdn.bootcss.com/simplemde/1.11.2/simplemde.min.js"></script>
     <style type="text/css">
         body {
-            background: #ebeeed url('/static/appmain/tt.jpg') repeat;
+            background: #ebeeed url('/static/appmain/backpic.jpg') repeat;
             padding-top: 50px;
             font-size: 1.7em;
             font-family: microsoft yahei, simsun, serif;
@@ -67,11 +70,9 @@
             <ul class="nav navbar-nav">
                 <li><a href="/mylinks/"><i class="fa fa-folder-o fa-fw"></i>笔记</a></li>
                 <li><a href="/mark"><i class="fa fa-pencil fa-fw"></i>新建</a></li>
-                <li><a href="/calendar/"><i class="fa fa-calendar-check-o fa-fw"></i>日历</a></li>
                 <li><a href="/space/"><i class="fa fa-home fa-fw"></i>主页</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right" style="padding-right: 44px">
-                <li><a href="/help/"><i class="fa fa-gear fa-fw"></i>设置</a></li>
                 {% if user.username %}
                     <li><a href="/userlogout/">{{ user.username }}<i class="fa fa-sign-out fa-fw"></i></a>
                     </li>
@@ -92,7 +93,8 @@
 </div>
 
 {% block footer %}
-
+{% endblock %}
+{% block js %}
 {% endblock %}
 </body>
 </html>

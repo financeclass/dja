@@ -1,5 +1,6 @@
 {% extends 'appmain/base.html' %}
 {% load markdown_deux_tags %}
+{% load my_tags %}
 {% block title %}links{% endblock %}
 {% block css %}
 
@@ -22,65 +23,53 @@
 
 {% block content %}
     <br>
-    {% if type == 'mylinks' %}
-        <div class="row">
-            <div class="col-sm-12" style="margin-bottom: 10px">
-                <div class="btn-group btn-group-lg">
-                    <button type="button" class="btn btn-default disabled">全部文件</button>
-                    <button type="button" class="btn btn-default disabled">文件夹1</button>
-                    <button type="button" class="btn btn-default disabled">文件夹2</button>
-                    <button type="button" class="btn btn-default disabled">新建文件夹</button>
-                </div>
-            </div>
-        </div>
-    {% else %}
-    {% endif %}
     <div class="row">
         <div class="col-sm-12" style="margin-bottom: 10px">
-            <div class="btn-group btn-group-md" style="float: left">
-                <button type="button" class="btn btn-default disabled">tag1</button>
-                <button type="button" class="btn btn-default disabled">tag2</button>
-                <button type="button" class="btn btn-default disabled">tag3</button>
+            <div class="btn-group" style="float: left">
+                <a href="{{ request.path }}" type="button"
+                   class="btn btn-default">All<i class="fa fa-tag fa-fw"></i></a>
+                {% for aa in query_tag_list %}
+                    <button type="button"
+                            class="btn btn-danger disabled">{{ aa }}</button>
+                {% endfor %}
+                {% for aa in tags %}
+                    <a href="{{ request.get_full_path|mytag_addtag:aa }}" type="button"
+                       class="btn btn-default">{{ aa }}</a>
+                {% endfor %}
+            </div> {% if thetype == 'mylinks' %}
+            <div class="dropdown  " style="float: right">
+                <button type="button" class="btn dropdown-toggle btn-default"
+                        id="dropdownMenu1" data-toggle="dropdown">排序：修改时间
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+
+                    <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="#">创建时间</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="#">标题</a>
+                    </li>
+                </ul>
             </div>
-            {% if type == 'mylinks' %}
-                <div class="dropdown  " style="float: right">
-                    <button type="button" class="btn dropdown-toggle btn-default"
-                            id="dropdownMenu1" data-toggle="dropdown">排序
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">访问时间</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">修改时间</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">创建时间</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">标题</a>
-                        </li>
-                    </ul>
-                </div>{% else %}
-                <div class="dropdown  " style="float: right">
-                    <button type="button" class="btn dropdown-toggle btn-default"
-                            id="dropdownMenu1" data-toggle="dropdown">排序
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">热门</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">最新</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">随机</a>
-                        </li>
-                    </ul>
-                </div>
-            {% endif %}
+        {% else %}
+
+            <div class="dropdown  " style="float: right">
+                <button type="button" class="btn dropdown-toggle btn-default"
+                        id="dropdownMenu1" data-toggle="dropdown">排序：热门
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+
+                    <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="#">最新</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="#">随机</a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
         </div>
     </div>
 
@@ -89,19 +78,19 @@
     <div class="row">
         <div class="col-sm-12 linkcard">
             {% for aa in linklist %}
-                <h2>   {{ aa.title }}</h2>
-                <p>{% if aa.url %}<a href="{{ aa.url }}"
-                                     target="_blank">{{ aa.url|cut:"https://"|cut:"http://"|cut:"www."|slice:'20' }}</a>{% else %}{% endif %}
-                </p>
-                {{ aa.content|markdown|truncatewords_html:"3" }}
+                <a href="/detail/?linkid={{ aa.id }}"><h2>{{ aa.title }}</h2></a>
+                {% if aa.url %}<p><a href="{{ aa.url }}"
+                                     target="_blank">{{ aa.url|cut:"https://"|cut:"http://"|cut:"www."|slice:'20' }}…<i
+                        class="fa fa-link fa-fw"></i></a></p>{% else %}{% endif %}
+                {{ aa.content|markdown|striptags|slice:'20' }}
                 <p class="  favbotton text-muted">
-                    {% if type == 'mylinks' %}
-                        <a href="/detail/?linkid={{ aa.id }}">详情</a>&nbsp;&nbsp;
+                    {% if aa.user == request.user %}
                         <a href="/mark/?linkid={{ aa.id }}&edit=1">修改</a>&nbsp;&nbsp;
                         <a href="/delete/?linkid={{ aa.id }}">删除</a>
+                    {% elif aa.id in hasfav %}
+                        <i class="fa fa-heart fa-fw"></i>
                     {% else %}
-                        <a href="/detail/?linkid={{ aa.id }}">详情</a>&nbsp;&nbsp;
-                        <a href="/mark/?linkid={{ aa.id }}">收藏</a>
+                        <a href="/mark/?linkid={{ aa.id }}"><i class="fa fa-heart-o fa-fw"></i></a>
                     {% endif %}
                 </p>
                 <hr>

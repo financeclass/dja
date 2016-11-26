@@ -8,20 +8,19 @@
 
 {% block content %}
     <div>{{ error_msg }}</div>
-    <div>测试账号：u1 123qwe</div>
     <form role="form" action="/userlogin/" method="post">
         {% csrf_token %}
         <div class="form-group">
             <label for="username" style="font-weight: lighter">用户名</label>
-            <input type="text" name="username" value="u1"
+            <input type="text" name="username"
                    class="form-control" id="username">
         </div>
         <div class="form-group">
             <label for="password" style="font-weight: lighter">密码</label>
-            <input type="password" name="password" value="123qwe"
+            <input type="password" name="password"
                    class="form-control" id="password">
         </div>
-        <button type="submit" class="btn btn-default">登录</button>
-        or <a href="/register/" class="btn btn-default">注册！</a>
+        <button type="submit" class="btn btn-success">登录~</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;or <a href="/register/" class="btn btn-primary" style="color: white">注册！</a>
     </form>
 {% endblock %}

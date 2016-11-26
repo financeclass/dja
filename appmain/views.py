@@ -1,13 +1,23 @@
 # coding:utf-8
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-import urllib.request
-import json
+from functools import reduce
+
+import sys
+
+# if sys.version[0]=='2':
+#     reload(sys)
+#     sys.setdefaultencoding('utf-8')
+
+
+default_channel = [u'电影', u'音乐', u'小说', u'编程', ]
+
+icon_dict = {u'电影': 'film', u'音乐': 'music', u'小说': 'pencil-square', u'编程': 'code'}
 
 
 def index(request):
@@ -15,71 +25,110 @@ def index(request):
 
 
 def home(request):
-    channellist = ['movie', 'novel', 'music', 'code']
+    channellist_local = [{'channel_name': aaa, 'channel_icon': icon_dict.get(aaa, 'angle-down')}
+                         for aaa in default_channel]
     linklist = [['1']]
-    for aa in channellist:
-        linklist.append([aa, Blog.objects.filter(channel=aa).filter(is_public=True).order_by('-id')[:5]])
-    linklist.append(['other', Blog.objects.exclude(channel__in=channellist).filter(is_public=True).order_by('-id')[:5]])
-    context = {'user': request.user,
-               'list': linklist}
-    return render(request, 'appmain/home.html', context)
+    if request.user.is_authenticated():
+        try:
+            userchannel = Profile.objects.get(user=request.user).channel_chosen
+            if userchannel != 'default':
+                userchannel_list = userchannel.replace('，', ',').split(',')
+                channellist_local = [{'channel_name': aaa, 'channel_icon': icon_dict.get(aaa, 'angle-down')}
+                                     for aaa in userchannel_list]
+        except Exception as e:
+            pass
+        hasfav = Blog.objects.filter(user=request.user).values_list('from_link')
+        hasfav = [aaa[0] for aaa in hasfav]
+
+    for aa in channellist_local:
+        linklist.append(
+            [aa, Blog.objects.filter(channel=aa['channel_name']).filter(is_public=True).order_by('-id')[:4]])
+    linklist.append([{'channel_name': 'other', 'channel_icon': 'angle-down'},
+                     Blog.objects.exclude(channel__in=[aaa['channel_name'] for aaa in channellist_local]).filter(
+                         is_public=True).order_by('-id')[:4]])
+
+    return render(request, 'appmain/home.html', locals())
 
 
 def detail(request):
-    # 区分是否本人
-    link = Blog.objects.get(id=request.GET.get('linkid', 0))
-    context = {'link': link, }
-    return render(request, 'appmain/detail.html', context)
-
-
-def help(request):
-    return render(request, 'appmain/help.html')
+    if request.user.is_authenticated():
+        hasfav = Blog.objects.filter(user=request.user).values_list('from_link')
+        hasfav = [aaa[0] for aaa in hasfav]
+    link = get_object_or_404(Blog, id=request.GET.get('linkid', 0))
+    if link.user != request.user and link.is_public == False:
+        return HttpResponse(u"无权限")
+    return render(request, 'appmain/detail.html', locals())
 
 
 def links(request):
-    channellist = ['movie', 'novel', 'music', 'code']
+    if request.user.is_authenticated():
+        hasfav = Blog.objects.filter(user=request.user).values_list('from_link')
+        hasfav = [aaa[0] for aaa in hasfav]
     if request.GET.get('channel', None) == 'other':
-        context = {'linklist': Blog.objects.exclude(channel__in=channellist).filter(is_public=True).order_by('-id')}
+        linklist = Blog.objects.exclude(channel__in=[default_channel]).filter(is_public=True).order_by('-id')
     else:
-        context = {
-        'linklist': Blog.objects.filter(channel=request.GET.get('channel', None)).filter(is_public=True).order_by(
-            '-id')}
-    context['type'] = 'links'
-    return render(request, 'appmain/links.html', context)
+        linklist = Blog.objects.filter(channel=request.GET.get('channel', None)).filter(is_public=True).order_by(
+            '-id')
+
+    thetype = 'links'
+    return render(request, 'appmain/links.html', locals())
 
 
 @login_required(login_url="/userlogin/")
 def mylinks(request):
-    context = {'linklist': Blog.objects.filter(user=request.user).order_by('-id'), 'type': 'mylinks'}
-    return render(request, 'appmain/links.html', context)
+    linklist = Blog.objects.filter(user=request.user).order_by('-id')
+
+    if request.GET.get('tag', None) is not None:
+        query_tag_list = request.GET.get('tag').split('*t*')
+        for aaa in query_tag_list:
+            linklist = linklist.filter(tags__contains=aaa)
+
+    tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
+    if None in tagset:
+        tagset.remove(None)
+    tags = set(reduce(lambda x, y: x.decode('utf8').encode('utf8') + ',' + y.decode('utf8').encode('utf8'), tagset).split(','))
+    if request.GET.get('tag', None) is not None:
+        for aaa in request.GET.get('tag').split('*t*'):
+            tags.remove(aaa)
+    thetype = 'mylinks'
+    return render(request, 'appmain/links.html', locals())
 
 
 @login_required(login_url="/userlogin/")
 def mark(request):
+    # TODO: 补全http
     if request.method == 'POST':
         form = BlogForm(request.POST)
         if form.is_valid():
             if int(request.GET.get('edit', 0)) == 0:
-                Blog.objects.create(title=form.cleaned_data['title'],
-                                    channel=form.cleaned_data['channel'],
-                                    content=form.cleaned_data['content'],
-                                    url=form.cleaned_data['url'],
-                                    is_public=form.cleaned_data['is_public'],
-                                    user=request.user)
+                newblog = Blog.objects.create(title=form.cleaned_data['title'],
+                                              tags=form.cleaned_data['tags'],
+                                              channel=form.cleaned_data['tags'].replace('，', ',').split(',')[0],
+                                              content=form.cleaned_data['content'],
+                                              url=form.cleaned_data['url'],
+                                              is_public=form.cleaned_data['is_public'],
+                                              user=request.user)
+                if int(request.GET.get('linkid', 0)) > 0:
+                    Blog.objects.filter(id=newblog.id).update(from_link=
+                                                              Blog.objects.get(id=request.GET.get('linkid', 0)))
             else:
                 Blog.objects.filter(id=request.GET.get('linkid', 0),
                                     user=request.user).update(title=form.cleaned_data['title'],
-                                                              channel=form.cleaned_data['channel'],
+                                                              tags=form.cleaned_data['tags'],
+                                                              channel=
+                                                              form.cleaned_data['tags'].replace('，', ',').split(',')[0],
                                                               content=form.cleaned_data['content'],
                                                               is_public=form.cleaned_data['is_public'],
                                                               url=form.cleaned_data['url'])
+
         return HttpResponseRedirect("/mylinks/")
     elif int(request.GET.get('linkid', 0)) > 0:
         thebolg = Blog.objects.get(id=request.GET.get('linkid', 0))
         form = BlogForm(instance=thebolg)
-        return render(request, 'appmain/mark.html', {'user': request.user, 'form': form})
+        return render(request, 'appmain/mark.html', locals())
     else:
-        return render(request, 'appmain/mark.html', {'user': request.user, 'form': BlogForm()})
+        form = BlogForm()
+        return render(request, 'appmain/mark.html', locals())
 
 
 @login_required(login_url="/userlogin/")
@@ -89,38 +138,41 @@ def delete(request):
 
 
 @login_required(login_url="/userlogin/")
-def calendar(request):
-    jsons = urllib.request.urlopen('http://www.weather.com.cn/data/cityinfo/101010100.html').read()
-
-    context = {'ip': request.META['REMOTE_ADDR'],
-               'weather': json.JSONDecoder().decode(jsons.decode('UTF8'))['weatherinfo']['city'] +
-                          json.JSONDecoder().decode(jsons.decode('UTF8'))['weatherinfo']['temp1'] +
-                          json.JSONDecoder().decode(jsons.decode('UTF8'))['weatherinfo']['temp2']
-    }
-    return render(request, 'appmain/calendar.html', context)
+def space(request):
+    return render(request, 'appmain/space.html', locals())
 
 
 @login_required(login_url="/userlogin/")
-def space(request):
-    context = []
-    return render(request, 'appmain/space.html', context)
+def profileset(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            Profile.objects.filter(user=request.user).update(channel_chosen=form.cleaned_data['channel_chosen'])
+            return HttpResponseRedirect("/space/")
+    else:
+        form = ProfileForm(instance=Profile.objects.get_or_create(user=request.user)[0])
+        return render(request, 'appmain/mark.html', locals())
 
 
 ################register###################
 
 def register(request):
     if request.method == 'POST':
-        # 判断是否重名
-        User.objects.create(username=request.POST.get('username', None), is_staff=True)
-        u = User.objects.get(username=request.POST.get('username', None))
-        u.set_password(request.POST.get('password', None))
-        u.save()
-        login(request, authenticate(username=request.POST.get('username', None),
-                                    password=request.POST.get('password', None)))
-        return HttpResponseRedirect("/home/")
+        try:
+            User.objects.create(username=request.POST.get('username', None), is_staff=True)
+            u = User.objects.get(username=request.POST.get('username', None))
+            Profile.objects.get_or_create(user=u)
+            u.set_password(request.POST.get('password', None))
+            u.save()
+            login(request, authenticate(username=request.POST.get('username', None),
+                                        password=request.POST.get('password', None)))
+            return HttpResponseRedirect("/home/")
+        except Exception as e:
+            error_msg = '用户名已占用'
+            return render(request, 'appmain/register.html', locals())
+
     else:
-        context = {'userlist': User.objects.all()}
-        return render(request, 'appmain/register.html', context)
+        return render(request, 'appmain/register.html', locals())
 
 
 def userlogin(request):
@@ -129,10 +181,10 @@ def userlogin(request):
                             password=request.POST.get('password', None))
         if auth is not None:
             login(request, auth)
-
-            return HttpResponseRedirect("/home/")
+            # todo: login next 无效
+            return HttpResponseRedirect('/home/')
         else:
-            return render(request, 'appmain/login.html', {'error_msg': 'wrong~'})
+            return render(request, 'appmain/login.html', {'error_msg': '用户不存在或密码错误'})
     else:
         return render(request, 'appmain/login.html')
 
