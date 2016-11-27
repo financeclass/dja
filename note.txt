@@ -1,4 +1,1 @@
-﻿
-
-
-admin:u1 123qwe
+admin:admin 123qwe
