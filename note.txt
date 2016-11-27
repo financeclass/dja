@@ -1,1 +1,1 @@
-admin:admin 123qwe
+admin 123qwe
