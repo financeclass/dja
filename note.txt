@@ -1,1 +1,1 @@
-admin:admin 123qwe
+superuser:admin 123qwe
