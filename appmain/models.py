@@ -46,14 +46,16 @@ class Blog(models.Model):
 class BlogForm(ModelForm):
     class Meta:
         model = Blog
-        fields = ('title', 'url', 'content', 'tags', 'is_public')
+        fields = ('title', 'url', 'content','channel', 'tags', 'is_public')
 
     def __init__(self, *args, **kwargs):
         super(BlogForm, self).__init__(*args, **kwargs)
         self.fields['url'].required = False
         self.fields['content'].required = False
         self.fields['tags'].required = False
+        self.fields['channel'].required = False
         self.fields['tags'].label = '标签'
+        self.fields['channel'].label = '频道'
         self.fields['content'].label = '笔记'
         self.fields['url'].label = '链接'
         self.fields['title'].label = '标题'

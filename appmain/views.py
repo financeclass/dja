@@ -8,11 +8,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from functools import reduce
 
-import sys
-
-# if sys.version[0]=='2':
-#     reload(sys)
-#     sys.setdefaultencoding('utf-8')
+# import sys
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 
 default_channel = [u'电影', u'音乐', u'小说', u'编程', ]
@@ -65,7 +63,7 @@ def links(request):
         hasfav = Blog.objects.filter(user=request.user).values_list('from_link')
         hasfav = [aaa[0] for aaa in hasfav]
     if request.GET.get('channel', None) == 'other':
-        linklist = Blog.objects.exclude(channel__in=[default_channel]).filter(is_public=True).order_by('-id')
+        linklist = Blog.objects.exclude(channel__in=default_channel).filter(is_public=True).order_by('-id')
     else:
         linklist = Blog.objects.filter(channel=request.GET.get('channel', None)).filter(is_public=True).order_by(
             '-id')
@@ -77,7 +75,7 @@ def links(request):
 @login_required(login_url="/userlogin/")
 def mylinks(request):
     linklist = Blog.objects.filter(user=request.user).order_by('-id')
-
+    # ----------tag 处理开始---------------
     if request.GET.get('tag', None) is not None:
         query_tag_list = request.GET.get('tag').split('*t*')
         for aaa in query_tag_list:
@@ -86,10 +84,13 @@ def mylinks(request):
     tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
     if None in tagset:
         tagset.remove(None)
-    tags = set(reduce(lambda x, y: x.decode('utf8').encode('utf8') + ',' + y.decode('utf8').encode('utf8'), tagset).split(','))
+    if '' in tagset:
+        tagset.remove('')
+    tags = set(reduce(lambda x, y: str(x) + ',' + str(y), tagset).replace(u'，',',').split(','))
     if request.GET.get('tag', None) is not None:
         for aaa in request.GET.get('tag').split('*t*'):
             tags.remove(aaa)
+    # ----------tag 处理结束---------------
     thetype = 'mylinks'
     return render(request, 'appmain/links.html', locals())
 
@@ -103,7 +104,7 @@ def mark(request):
             if int(request.GET.get('edit', 0)) == 0:
                 newblog = Blog.objects.create(title=form.cleaned_data['title'],
                                               tags=form.cleaned_data['tags'],
-                                              channel=form.cleaned_data['tags'].replace('，', ',').split(',')[0],
+                                              channel=form.cleaned_data['channel'],
                                               content=form.cleaned_data['content'],
                                               url=form.cleaned_data['url'],
                                               is_public=form.cleaned_data['is_public'],
@@ -115,8 +116,7 @@ def mark(request):
                 Blog.objects.filter(id=request.GET.get('linkid', 0),
                                     user=request.user).update(title=form.cleaned_data['title'],
                                                               tags=form.cleaned_data['tags'],
-                                                              channel=
-                                                              form.cleaned_data['tags'].replace('，', ',').split(',')[0],
+                                                              channel= form.cleaned_data['channel'],
                                                               content=form.cleaned_data['content'],
                                                               is_public=form.cleaned_data['is_public'],
                                                               url=form.cleaned_data['url'])
@@ -154,7 +154,7 @@ def profileset(request):
         return render(request, 'appmain/mark.html', locals())
 
 
-################register###################
+# --------------- register ------------------
 
 def register(request):
     if request.method == 'POST':

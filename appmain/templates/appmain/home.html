@@ -83,40 +83,9 @@
 
 
 {% block content %}
-    <div ng-app="" ng-init="name=''" class="search">
-        <form role="form">
-            <div class="form-group">
-                <label for="sinput"></label>
-                <input style="font-size: larger;height: auto"
-                       autofocus="autofocus" id="sinput"
-                       type="text" class="form-control" ng-model="name">
-            </div>
-        </form>
-        <div class="btn-group btn-group-lg">
-            {% verbatim %}
-
-            <a href="{{name.length>0? 'https://www.baidu.com/s?wd='+name:'https://www.baidu.com/'}}"
-               target="_blank" type="button" class="btn btn-default">百度</a>
-            <a href="{{name.length>0? 'http://global.bing.com/search?q='+name:'http://global.bing.com'}}"
-               target="_blank" type="button" class="btn btn-default">Bing</a>
-            <a href="{{name.length>0? 'https://www.zhihu.com/search?type=content&q='+name:'https://www.zhihu.com/explore'}}"
-               target="_blank" type="button" class="btn btn-default">知乎</a>
-            <button type="button" class="btn btn-default disabled">本站</button>
-            {% endverbatim %}
-
-            <button type="button" class="btn btn-default" data-toggle="collapse"
-                    data-target="#demo"><i class="fa  fa-angle-down fa-fw"></i>
-            </button>
-        </div>
-        <div id="demo" class="collapse ">
-            <div class="btn-group  ">{% verbatim %}
-                <a href="{{name.length>0? 'https://s.taobao.com/search?q='+name:'https://www.taobao.com/'}}"
-               target="_blank" type="button" class="btn btn-default">淘宝</a>{% endverbatim %}
-            </div>
-        </div>
-    </div>
 
 
+{% include 'appmain/searchbox.html' %}
 
 
     <div class="row">

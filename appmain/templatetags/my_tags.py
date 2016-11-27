@@ -21,8 +21,6 @@ def mytag_getkey(value, para):
 register.filter('mytag_getkey', mytag_getkey)
 
 
-
-
 def mytag_addtag(value, para):
     if value.find('tag=') == -1:
         return value + '?tag=' + urlquote(para)
@@ -31,3 +29,9 @@ def mytag_addtag(value, para):
 
 
 register.filter('mytag_addtag', mytag_addtag)
+
+# TODO: 未完成
+def mytag_striptag(value ):
+    return value
+
+register.filter('mytag_striptag', mytag_striptag)
