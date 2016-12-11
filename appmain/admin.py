@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Person, Blog
+from .models import *
 
 
 class blogAdmin(admin.ModelAdmin):
@@ -10,4 +10,5 @@ class blogAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Person)
+admin.site.register(css_crawl)
 admin.site.register(Blog, blogAdmin)

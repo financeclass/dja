@@ -5,7 +5,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <auto-commit>false</auto-commit>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:F:\dja\db.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:F:\git\dja\db.sqlite3</jdbc-url>
       <libraries />
     </data-source>
   </component>

@@ -15,6 +15,40 @@ class Person(models.Model):
     def __str__(self):
         return self.name
 
+@python_2_unicode_compatible
+class Channel(models.Model):
+    name = models.CharField(max_length=30,unique=True)
+    name_en = models.CharField(max_length=30,unique=True)
+    sub_channel = models.CharField(max_length=30, null=True)
+    state = models.IntegerField()
+    order = models.IntegerField()
+    content = models.TextField(max_length=1000)
+    top_url = models.URLField(null=True)
+    icon = models.CharField(max_length=30, null=True)
+
+
+    def __str__(self):
+        return self.name
+
+@python_2_unicode_compatible
+class css_crawl(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    css_selector = models.CharField(max_length=200)
+    url = models.URLField(null=True)
+    top = models.IntegerField(null=True,blank=True)
+    belong_user = models.ForeignKey(User, null=True)
+    channel = models.CharField(max_length=30, null=True,blank=True)
+    tags = models.CharField(max_length=30, null=True,blank=True)
+    login_user = models.CharField(max_length=30, null=True,blank=True)
+    login_pw = models.CharField(max_length=30, null=True,blank=True)
+    include_words = models.CharField(max_length=30, null=True,blank=True)
+    exclude_words = models.CharField(max_length=30, null=True,blank=True)
+    error_count = models.IntegerField(null=True,blank=True)
+    default_onpage=models.BooleanField(default=True)
+
+def __str__(self):
+    return self.name
+
 
 @python_2_unicode_compatible
 class Profile(models.Model):
@@ -46,7 +80,7 @@ class Blog(models.Model):
 class BlogForm(ModelForm):
     class Meta:
         model = Blog
-        fields = ('title', 'url', 'content','channel', 'tags', 'is_public')
+        fields = ('title', 'url', 'content', 'channel', 'tags', 'is_public')
 
     def __init__(self, *args, **kwargs):
         super(BlogForm, self).__init__(*args, **kwargs)
