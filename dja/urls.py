@@ -18,6 +18,8 @@ from django.contrib import admin
 from appmain import views as appmain_views
 
 urlpatterns = [
+    url(r'^comments/', include('django_comments_xtd.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', appmain_views.home),
     url(r'^home/', appmain_views.home),

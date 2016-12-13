@@ -27,8 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+SITE_ID=1
 # Application definition
+
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -37,8 +38,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django_comments',
+    'django_comments_xtd',
     'appmain', 'markdown_deux', 'crispy_forms',
 )
+
+COMMENTS_APP ='django_comments_xtd'
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+COMMENTS_XTD_CONFIRM_EMAIL = False
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
