@@ -40,13 +40,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django_comments',
-    'django_comments_xtd',
+
     'appmain', 'markdown_deux', 'crispy_forms',
 )
 
-COMMENTS_APP ='django_comments_xtd'
-COMMENTS_XTD_MAX_THREAD_LEVEL = 1
-COMMENTS_XTD_CONFIRM_EMAIL = False
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
