@@ -1,6 +1,6 @@
 {% extends 'appmain/base.html' %}
 {% load markdown_deux_tags %}
-{% load comments  %}
+{% load comments %}
 {% block title %}detail{% endblock %}
 {% block css %}
 
@@ -55,9 +55,11 @@
 
     <div class="row">
         <div class="col-sm-12 detailcard">
-
-            {% render_comment_form for link %}
-
+            {% if request.user.username %}
+                {% render_comment_form for link %}
+            {% else %}
+                <div class="well">登录后评论</div>
+            {% endif %}
             {% render_comment_list for link %}
 
         </div>

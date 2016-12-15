@@ -48,7 +48,7 @@ def post_comment(request, next=None, using=None):
         if not data.get('name', ''):
             data["name"] = request.user.get_full_name() or request.user.get_username()
         if not data.get('email', ''):
-            data["email"] = request.user.email
+            data["email"] = '123@123.com'#request.user.email
 
     # Look up the object we're trying to comment about
     ctype = data.get("content_type")
@@ -129,7 +129,7 @@ def post_comment(request, next=None, using=None):
         comment=comment,
         request=request
     )
-
+    # return HttpResponseRedirect(request.path)
     return next_redirect(request, fallback=next or 'comments-comment-done',
                          c=comment._get_pk_val())
 

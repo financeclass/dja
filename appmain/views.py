@@ -81,15 +81,15 @@ def mylinks(request):
         for aaa in query_tag_list:
             linklist = linklist.filter(tags__contains=aaa)
 
-    tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
-    if None in tagset:
-        tagset.remove(None)
-    if '' in tagset:
-        tagset.remove('')
-    tags = set(reduce(lambda x, y: str(x) + ',' + str(y), tagset).replace(u'，',',').split(','))
-    if request.GET.get('tag', None) is not None:
-        for aaa in request.GET.get('tag').split('*t*'):
-            tags.remove(aaa)
+        tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
+        if None in tagset:
+            tagset.remove(None)
+        if '' in tagset:
+            tagset.remove('')
+        tags = set(reduce(lambda x, y: str(x) + ',' + str(y), tagset).replace(u'，',',').split(','))
+        if request.GET.get('tag', None) is not None:
+            for aaa in request.GET.get('tag').split('*t*'):
+                tags.remove(aaa)
     # ----------tag 处理结束---------------
     thetype = 'mylinks'
     return render(request, 'appmain/links.html', locals())

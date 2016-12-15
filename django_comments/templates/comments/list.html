@@ -1,8 +1,8 @@
 <dl id="comments">
   {% for comment in comment_list %}
-    <dt id="c{{ comment.id }}">
-      {{ comment.submit_date }} - {{ comment.name }}
-    </dt>
+    <div id="c{{ comment.id }}">
+      <small class="text-muted">{{ comment.name }}  {{ comment.submit_date }}</small>
+    </div>
     <dd>
       <p>{{ comment.comment }}</p>
     </dd>

@@ -1,8 +1,9 @@
-{% extends "comments/base.html" %}
+{% extends 'appmain/base.html' %}
 {% load i18n %}
 
 {% block title %}{% trans "Thanks for commenting" %}.{% endblock %}
 
 {% block content %}
-  <h1>{% trans "Thank you for your comment" %}.</h1>
+  <h3>{% trans "Thank you for your comment" %}.</h3>
+    <a type="button" class="btn btn-default" href="javascript:" onclick="self.location=document.referrer;">返回~</a>
 {% endblock %}

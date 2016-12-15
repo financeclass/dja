@@ -105,11 +105,12 @@ class CommentDetailsForm(CommentSecurityForm):
     name = forms.CharField(label=pgettext_lazy("Person name", "Name"),
                            widget=forms.HiddenInput,
                            max_length=50)
-    email = forms.EmailField(label=_("Email address"),widget=forms.HiddenInput,
+    email = forms.EmailField(label=_("Email address"),
+                             widget=forms.HiddenInput,
                              )
     url = forms.URLField(label=_("URL"), widget=forms.HiddenInput,required=False)
     comment = forms.CharField(label=_('Comment'),
-                              widget=forms.Textarea(attrs={'placeholder': _('匿名评论'),
+                              widget=forms.Textarea(attrs={'rows':"3",
 
                                                            'class': ('form-control')}),
                               max_length=COMMENT_MAX_LENGTH)
