@@ -109,7 +109,7 @@ class CommentDetailsForm(CommentSecurityForm):
                              widget=forms.HiddenInput,
                              )
     url = forms.URLField(label=_("URL"), widget=forms.HiddenInput,required=False)
-    comment = forms.CharField(label=_('Comment'),
+    comment = forms.CharField(label=_('Comment'),required=True,
                               widget=forms.Textarea(attrs={'rows':"3",
 
                                                            'class': ('form-control')}),

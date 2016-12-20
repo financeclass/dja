@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-SITE_ID=1
+SITE_ID = 1
 # Application definition
 
 
@@ -41,9 +41,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django_comments',
 
-    'appmain', 'markdown_deux', 'crispy_forms',
+    'appmain', 'markdown_deux',
 )
-
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -109,4 +108,3 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
-CRISPY_TEMPLATE_PACK = 'bootstrap3'

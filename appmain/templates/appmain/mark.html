@@ -1,5 +1,4 @@
 {% extends 'appmain/base.html' %}
-{% load crispy_forms_tags %}
 {% block title %}mark{% endblock %}
 {% block css %}
 
@@ -10,20 +9,29 @@
 {% block content %}
     <form role="form" method="post" class="bootstrap3">
         {% csrf_token %}
-        {{ form|crispy }}
+        {{ form }}
+        <br>
         <button type="submit" class="btn btn-default">保存</button>
     </form>
+
+
+
 {% endblock %}
 
 {% block js %}
 
     <script>
         var simplemde = new SimpleMDE(
-                {element: document.getElementById("id_content") ,
-                    spellChecker: false}
+                {
+                    element: document.getElementById("id_content"),
+                    spellChecker: false
+                }
         );
         $(function () {
             $('input#id_title').focus();
         });
+        $(function () {
+            $("[name='is_public']").bootstrapSwitch();
+        })
     </script>
 {% endblock %}

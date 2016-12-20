@@ -1,5 +1,6 @@
 {% extends 'appmain/base.html' %}
 {% load markdown_deux_tags %}
+
 {% load comments %}
 {% block title %}detail{% endblock %}
 {% block css %}
@@ -61,6 +62,7 @@
                 <div class="well">登录后评论</div>
             {% endif %}
             {% render_comment_list for link %}
+
 
         </div>
     </div>

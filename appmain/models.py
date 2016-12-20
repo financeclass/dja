@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.auth.models import User
-from django.forms import ModelForm
+from django.forms import ModelForm,TextInput,Textarea,CheckboxInput
 
 # 测试用模型
 @python_2_unicode_compatible
@@ -63,6 +63,7 @@ class Profile(models.Model):
 class Blog(models.Model):
     title = models.CharField(max_length=30)
     channel = models.CharField(max_length=30, null=True)
+    folder = models.CharField(max_length=30, null=True)
     on_page = models.BooleanField(default=False)
     editor = models.ForeignKey(User, null=True, related_name='blog_editor')
     tags = models.CharField(max_length=30, null=True)
@@ -81,15 +82,23 @@ class BlogForm(ModelForm):
     class Meta:
         model = Blog
         fields = ('title', 'url', 'content', 'channel', 'tags', 'is_public')
+        widgets={'content':Textarea(attrs={'class': 'form-control'}),
+                 'url':TextInput(attrs={'class': 'form-control'}),
+                 'tags':TextInput(attrs={'class': 'form-control'}),
+                 'channel':TextInput(attrs={'class': 'form-control'}),
+                 'title':TextInput(attrs={'class': 'form-control'}),
+                 'is_public':CheckboxInput(),
+                 }
 
     def __init__(self, *args, **kwargs):
         super(BlogForm, self).__init__(*args, **kwargs)
+
         self.fields['url'].required = False
         self.fields['content'].required = False
         self.fields['tags'].required = False
         self.fields['channel'].required = False
         self.fields['tags'].label = '标签'
-        self.fields['channel'].label = '频道'
+        self.fields['channel'].label = '分类'
         self.fields['content'].label = '笔记'
         self.fields['url'].label = '链接'
         self.fields['title'].label = '标题'

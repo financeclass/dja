@@ -1,5 +1,6 @@
 {% extends 'appmain/base.html' %}
 {% load markdown_deux_tags %}
+
 {% load my_tags %}
 {% block title %}links{% endblock %}
 {% block css %}
@@ -25,52 +26,54 @@
     <br>
     <div class="row">
         <div class="col-sm-12" style="margin-bottom: 10px">
-        {% if thetype == 'mylinks' %}
-            <div class="btn-group" style="float: left">
-                <a href="{{ request.path|mytag_striptag }}" type="button"
-                   class="btn btn-default">All<i class="fa fa-tag fa-fw"></i></a>
-                {% for aa in query_tag_list %}
-                    <button type="button"
-                            class="btn btn-danger disabled">{{ aa }}</button>
-                {% endfor %}
-                {% for aa in tags %}
-                    <a href="{{ request.get_full_path|mytag_addtag:aa }}" type="button"
-                       class="btn btn-default">{{ aa }}</a>
-                {% endfor %}
-            </div>
-            <div class="dropdown  " style="float: right">
-                <button type="button" class="btn dropdown-toggle btn-default"
-                        id="dropdownMenu1" data-toggle="dropdown">排序：修改时间
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+            {% if thetype == 'mylinks' %}
+                <div class="btn-group" style="float: left">
+                    <a href="{{ request.path|mytag_striptag }}" type="button"
+                       class="btn btn-default">All<i class="fa fa-tag fa-fw"></i></a>
 
-                    <li role="presentation">
-                        <a role="menuitem" tabindex="-1" href="#">创建时间</a>
-                    </li>
-                    <li role="presentation">
-                        <a role="menuitem" tabindex="-1" href="#">标题</a>
-                    </li>
-                </ul>
-            </div>
-        {% else %}
 
-            <div class="dropdown  " style="float: right">
-                <button type="button" class="btn dropdown-toggle btn-default"
-                        id="dropdownMenu1" data-toggle="dropdown">排序：热门
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+                    {% for aa in query_tag_list %}
+                        <button type="button"
+                                class="btn btn-danger disabled">{{ aa }}</button>
+                    {% endfor %}
+                    {% for aa in tags %}
+                        <a href="{{ request.get_full_path|mytag_addtag:aa }}" type="button"
+                           class="btn btn-default">{{ aa }}</a>
+                    {% endfor %}
+                </div>
+                <div class="dropdown  " style="float: right">
+                    <button type="button" class="btn dropdown-toggle btn-default"
+                            id="dropdownMenu1" data-toggle="dropdown">排序：修改时间
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
 
-                    <li role="presentation">
-                        <a role="menuitem" tabindex="-1" href="#">最新</a>
-                    </li>
-                    <li role="presentation">
-                        <a role="menuitem" tabindex="-1" href="#">随机</a>
-                    </li>
-                </ul>
-            </div>
-        {% endif %}
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">创建时间</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">标题</a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+
+                <div class="dropdown  " style="float: right">
+                    <button type="button" class="btn dropdown-toggle btn-default"
+                            id="dropdownMenu1" data-toggle="dropdown">排序：热门
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">最新</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="#">随机</a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -78,6 +81,8 @@
 
     <div class="row">
         <div class="col-sm-12 linkcard">
+
+
             {% for aa in linklist %}
                 <a href="/detail/?linkid={{ aa.id }}"><h2>{{ aa.title }}</h2></a>
                 {% if aa.url %}<p><a href="{{ aa.url }}"
@@ -98,6 +103,20 @@
             {% empty %}
                 <h3> 什么也没有找到</h3>
             {% endfor %}
+
+            {% if page == 1 %}
+                1
+                <a href="{{ request.get_full_path|next_page:1 }}">下一页 </a>
+            {% elif page == 2 %}
+                <a href="{{ request.get_full_path|previous_page:2 }}">1</a>
+                2
+                <a href="{{ request.get_full_path|next_page:page }}">下一页 </a>
+            {% else %}
+                <a href="{{ request.get_full_path|previous_page:2 }}">1</a>...
+                <a href="{{ request.get_full_path|previous_page:page }}">上一页 </a>
+                {{ page }}
+                <a href="{{ request.get_full_path|next_page:page }}">下一页 </a>
+            {% endif %}
         </div>
     </div>
 

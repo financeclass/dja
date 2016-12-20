@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from functools import reduce
-
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 # import sys
 # reload(sys)
 # sys.setdefaultencoding('utf-8')
@@ -59,6 +59,7 @@ def detail(request):
 
 
 def links(request):
+    page = int(request.GET.get('page', 1))
     if request.user.is_authenticated():
         hasfav = Blog.objects.filter(user=request.user).values_list('from_link')
         hasfav = [aaa[0] for aaa in hasfav]
@@ -67,19 +68,22 @@ def links(request):
     else:
         linklist = Blog.objects.filter(channel=request.GET.get('channel', None)).filter(is_public=True).order_by(
             '-id')
-
+    linklist=linklist[page*5-5:page*5]
     thetype = 'links'
     return render(request, 'appmain/links.html', locals())
 
 
 @login_required(login_url="/userlogin/")
 def mylinks(request):
+
+    page = int(request.GET.get('page', 1))
     linklist = Blog.objects.filter(user=request.user).order_by('-id')
     # ----------tag 处理开始---------------
-    if request.GET.get('tag', None) is not None:
-        query_tag_list = request.GET.get('tag').split('*t*')
-        for aaa in query_tag_list:
-            linklist = linklist.filter(tags__contains=aaa)
+    if linklist.count()>0:
+        if request.GET.get('tag', None) is not None:
+            query_tag_list = request.GET.get('tag').split('*t*')
+            for aaa in query_tag_list:
+                linklist = linklist.filter(tags__contains=aaa)
 
         tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
         if None in tagset:
@@ -92,6 +96,7 @@ def mylinks(request):
                 tags.remove(aaa)
     # ----------tag 处理结束---------------
     thetype = 'mylinks'
+    linklist=linklist[page*5-5:page*5]
     return render(request, 'appmain/links.html', locals())
 
 
