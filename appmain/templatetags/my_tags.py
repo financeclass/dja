@@ -32,7 +32,16 @@ def parse_url(url, para, value):
                 para_list[index] = para + '=' + value
         return url_list[0] + '/?' + '&'.join(para_list)
 
+def change_folder(value, para):
+    if value.find('/?') == -1:
+        return value + '?folder='+str(para)
+    elif value.find('folder=') == -1:
+        return value + '&folder='+str(para)
+    else:
+        return  parse_url(value, 'folder', str(para))
 
+
+register.filter('change_folder', change_folder)
 def previous_page(value, para):
     if value.find('/?') == -1:
         value += '/?page=1'

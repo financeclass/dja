@@ -5,13 +5,25 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.auth.models import User
 from django.forms import ModelForm,TextInput,Textarea,CheckboxInput
-
+from mptt.models import MPTTModel, TreeForeignKey
 # 测试用模型
 @python_2_unicode_compatible
 class Person(models.Model):
     name = models.CharField(max_length=30)
     age = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+
+
+
+class Genre(MPTTModel):
+    user = models.ForeignKey(User, null=True)
+    name = models.CharField(max_length=50)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
     def __str__(self):
         return self.name
 
@@ -61,6 +73,7 @@ class Profile(models.Model):
 
 @python_2_unicode_compatible
 class Blog(models.Model):
+    gera = models.ForeignKey(Genre, null=True)
     title = models.CharField(max_length=30)
     channel = models.CharField(max_length=30, null=True)
     folder = models.CharField(max_length=30, null=True)

@@ -6,8 +6,9 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from functools import reduce
-from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+
 # import sys
 # reload(sys)
 # sys.setdefaultencoding('utf-8')
@@ -20,6 +21,59 @@ icon_dict = {u'电影': 'film', u'音乐': 'music', u'小说': 'pencil-square', 
 
 def index(request):
     return HttpResponse(u"welcome!  欢迎光临!")
+
+
+@login_required(login_url="/userlogin/")
+def create_folder(request):
+    if request.method == 'POST':
+
+        new_folder = Genre.objects.create(user=request.user,
+                                  name=request.POST.get('folder_name', None),
+                                  parent=Genre.objects.get(id=request.GET.get('folder', None)))
+        return HttpResponseRedirect("/mylinks/")
+    else:
+        return render(request, 'appmain/create_folder.html', locals())
+
+
+@login_required(login_url="/userlogin/")
+def mylinks(request):
+    if request.GET.get('folder', None) is None:
+        folder_now = Genre.objects.get_or_create(user=request.user, name='root123')[0]
+        linklist = Blog.objects.filter(user=request.user).order_by('-id')
+        linklist = linklist.filter(Q(gera__isnull=True) | Q(gera=folder_now)).order_by('-id')
+    else:
+        folder_now = Genre.objects.get(id=request.GET.get('folder', None))
+        linklist = Blog.objects.filter(user=request.user).order_by('-id')
+        if folder_now.parent_id:
+
+            linklist = linklist.filter(gera=folder_now).order_by('-id')
+        else:
+            linklist = linklist.filter(Q(gera__isnull=True) | Q(gera=folder_now)).order_by('-id')
+
+    folders = Genre.objects.filter(parent=folder_now).order_by('name')
+
+    page = int(request.GET.get('page', 1))
+
+    # ----------tag 处理开始---------------
+    # if linklist.count()>0:
+    # if request.GET.get('tag', None) is not None:
+    #         query_tag_list = request.GET.get('tag').split('*t*')
+    #         for aaa in query_tag_list:
+    #             linklist = linklist.filter(tags__contains=aaa)
+    #
+    #     tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
+    #     if None in tagset:
+    #         tagset.remove(None)
+    #     if '' in tagset:
+    #         tagset.remove('')
+    #     tags = set(reduce(lambda x, y: str(x) + ',' + str(y), tagset).replace(u'，',',').split(','))
+    #     if request.GET.get('tag', None) is not None:
+    #         for aaa in request.GET.get('tag').split('*t*'):
+    #             tags.remove(aaa)
+    # ----------tag 处理结束---------------
+    thetype = 'mylinks'
+    linklist = linklist[page * 5 - 5:page * 5]
+    return render(request, 'appmain/links.html', locals())
 
 
 def home(request):
@@ -68,35 +122,8 @@ def links(request):
     else:
         linklist = Blog.objects.filter(channel=request.GET.get('channel', None)).filter(is_public=True).order_by(
             '-id')
-    linklist=linklist[page*5-5:page*5]
+    linklist = linklist[page * 5 - 5:page * 5]
     thetype = 'links'
-    return render(request, 'appmain/links.html', locals())
-
-
-@login_required(login_url="/userlogin/")
-def mylinks(request):
-
-    page = int(request.GET.get('page', 1))
-    linklist = Blog.objects.filter(user=request.user).order_by('-id')
-    # ----------tag 处理开始---------------
-    if linklist.count()>0:
-        if request.GET.get('tag', None) is not None:
-            query_tag_list = request.GET.get('tag').split('*t*')
-            for aaa in query_tag_list:
-                linklist = linklist.filter(tags__contains=aaa)
-
-        tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
-        if None in tagset:
-            tagset.remove(None)
-        if '' in tagset:
-            tagset.remove('')
-        tags = set(reduce(lambda x, y: str(x) + ',' + str(y), tagset).replace(u'，',',').split(','))
-        if request.GET.get('tag', None) is not None:
-            for aaa in request.GET.get('tag').split('*t*'):
-                tags.remove(aaa)
-    # ----------tag 处理结束---------------
-    thetype = 'mylinks'
-    linklist=linklist[page*5-5:page*5]
     return render(request, 'appmain/links.html', locals())
 
 
@@ -117,11 +144,14 @@ def mark(request):
                 if int(request.GET.get('linkid', 0)) > 0:
                     Blog.objects.filter(id=newblog.id).update(from_link=
                                                               Blog.objects.get(id=request.GET.get('linkid', 0)))
+                if int(request.GET.get('folder', 0)) > 0:
+                    Blog.objects.filter(id=newblog.id).update(
+                        gera=Genre.objects.get(id=request.GET.get('folder', None)))
             else:
                 Blog.objects.filter(id=request.GET.get('linkid', 0),
                                     user=request.user).update(title=form.cleaned_data['title'],
                                                               tags=form.cleaned_data['tags'],
-                                                              channel= form.cleaned_data['channel'],
+                                                              channel=form.cleaned_data['channel'],
                                                               content=form.cleaned_data['content'],
                                                               is_public=form.cleaned_data['is_public'],
                                                               url=form.cleaned_data['url'])

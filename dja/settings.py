@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django_comments',
 
-    'appmain', 'markdown_deux',
+    'appmain', 'markdown_deux','mptt',
 )
 
 MIDDLEWARE_CLASSES = (

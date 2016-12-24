@@ -1,6 +1,6 @@
 {% extends 'appmain/base.html' %}
 {% load markdown_deux_tags %}
-
+{% load mptt_tags %}
 {% load my_tags %}
 {% block title %}links{% endblock %}
 {% block css %}
@@ -80,6 +80,42 @@
 
 
     <div class="row">
+        {% if thetype == 'mylinks' %}
+
+            <ul class="list-group">
+                <li class="list-group-item">
+
+                    {% if folder_now.parent_id %}
+                        <a href="{{ request.get_full_path|change_folder:folder_now.parent_id }}">
+                            <span class="fa fa-angle-up"></span>上层目录</a>
+                    {% else %}
+                        根目录
+                    {% endif %}
+
+                    <a href="/create_folder/?folder={{ folder_now.id }}"
+                       type="button" class="btn   btn-default"
+                       style="float: right">
+                        <span class="fa fa-folder-open-o"></span> 新文件夹</a>
+                <a  style="float: right"  type="button" class="btn   btn-default"
+                           href="/mark/?folder={{ folder_now.id }}"><span class="fa fa-pencil"></span> 新笔记</a>
+                </li>
+                {% recursetree folders %}
+
+
+                    <li class="list-group-item">
+                        <a href="{{ request.get_full_path|change_folder:node.id }}">{{ node.name }}</a>
+                    </li>
+
+                    {#               {% if not node.is_leaf_node %}#}
+                    {#                <ul class="children">#}
+                    {#                    {{ children }}333#}
+                    {#                </ul>#}
+                    {#            {% endif %}#}
+                {% endrecursetree %}</ul>
+
+
+
+        {% endif %}
         <div class="col-sm-12 linkcard">
 
 

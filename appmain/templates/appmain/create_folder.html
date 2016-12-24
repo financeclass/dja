@@ -1,0 +1,21 @@
+{% extends 'appmain/base.html' %}
+
+{% block title %}register{% endblock %}
+{% block css %}
+{% endblock %}
+
+
+
+{% block content %}
+    <div>{{ error_msg }}</div>
+    <form role="form"   method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="folder_name" style="font-weight: lighter">文件夹名</label>
+            <input type="text" name="folder_name"
+                   class="form-control" id="folder_name">
+        </div>
+        <button type="submit" class="btn btn-default">保存</button>
+    </form>
+
+{% endblock %}
