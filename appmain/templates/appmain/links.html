@@ -43,36 +43,33 @@
                 </div>
                 <div class="dropdown  " style="float: right">
                     <button type="button" class="btn dropdown-toggle btn-default"
-                            id="dropdownMenu1" data-toggle="dropdown">排序：修改时间
+                            id="dropdownMenu1" data-toggle="dropdown">排序：{{ sort_now }}
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
-
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">创建时间</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">标题</a>
-                        </li>
+                        {% for aa in sort_type %}
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{{ request.get_full_path|change_sort:aa }}">{{ aa }}</a>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
             {% else %}
 
-                <div class="dropdown  " style="float: right">
-                    <button type="button" class="btn dropdown-toggle btn-default"
-                            id="dropdownMenu1" data-toggle="dropdown">排序：热门
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
-
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">最新</a>
-                        </li>
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="#">随机</a>
-                        </li>
-                    </ul>
-                </div>
+{#                <div class="dropdown  " style="float: right">#}
+{#                    <button type="button" class="btn dropdown-toggle btn-default"#}
+{#                            id="dropdownMenu1" data-toggle="dropdown">排序：热门#}
+{#                        <span class="caret"></span>#}
+{#                    </button>#}
+{#                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">#}
+{#                        <li role="presentation">#}
+{#                            <a role="menuitem" tabindex="-1" href="#">最新</a>#}
+{#                        </li>#}
+{#                        <li role="presentation">#}
+{#                            <a role="menuitem" tabindex="-1" href="#">随机</a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                </div>#}
             {% endif %}
         </div>
     </div>
@@ -96,8 +93,8 @@
                        type="button" class="btn   btn-default"
                        style="float: right">
                         <span class="fa fa-folder-open-o"></span> 新文件夹</a>
-                <a  style="float: right"  type="button" class="btn   btn-default"
-                           href="/mark/?folder={{ folder_now.id }}"><span class="fa fa-pencil"></span> 新笔记</a>
+                    <a style="float: right" type="button" class="btn   btn-default"
+                       href="/mark/?folder={{ folder_now.id }}"><span class="fa fa-pencil"></span> 新笔记</a>
                 </li>
                 {% recursetree folders %}
 

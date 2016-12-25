@@ -32,6 +32,17 @@ def parse_url(url, para, value):
                 para_list[index] = para + '=' + value
         return url_list[0] + '/?' + '&'.join(para_list)
 
+def change_sort(value, para):
+    if value.find('/?') == -1:
+        return value + '?sort='+str(para)
+    elif value.find('sort=') == -1:
+        return value + '&sort='+str(para)
+    else:
+        return  parse_url(value, 'sort', str(para))
+
+
+register.filter('change_sort', change_sort)
+
 def change_folder(value, para):
     if value.find('/?') == -1:
         return value + '?folder='+str(para)

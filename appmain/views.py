@@ -28,8 +28,8 @@ def create_folder(request):
     if request.method == 'POST':
 
         new_folder = Genre.objects.create(user=request.user,
-                                  name=request.POST.get('folder_name', None),
-                                  parent=Genre.objects.get(id=request.GET.get('folder', None)))
+                                          name=request.POST.get('folder_name', None),
+                                          parent=Genre.objects.get(id=request.GET.get('folder', None)))
         return HttpResponseRedirect("/mylinks/")
     else:
         return render(request, 'appmain/create_folder.html', locals())
@@ -39,16 +39,24 @@ def create_folder(request):
 def mylinks(request):
     if request.GET.get('folder', None) is None:
         folder_now = Genre.objects.get_or_create(user=request.user, name='root123')[0]
-        linklist = Blog.objects.filter(user=request.user).order_by('-id')
-        linklist = linklist.filter(Q(gera__isnull=True) | Q(gera=folder_now)).order_by('-id')
+        linklist = Blog.objects.filter(user=request.user)
+        linklist = linklist.filter(Q(gera__isnull=True) | Q(gera=folder_now))
     else:
         folder_now = Genre.objects.get(id=request.GET.get('folder', None))
-        linklist = Blog.objects.filter(user=request.user).order_by('-id')
+        linklist = Blog.objects.filter(user=request.user)
         if folder_now.parent_id:
 
-            linklist = linklist.filter(gera=folder_now).order_by('-id')
+            linklist = linklist.filter(gera=folder_now)
         else:
-            linklist = linklist.filter(Q(gera__isnull=True) | Q(gera=folder_now)).order_by('-id')
+            linklist = linklist.filter(Q(gera__isnull=True) | Q(gera=folder_now))
+
+    sort_type = ['title', 'create_time']
+    sort_now = request.GET.get('sort', 'create_time')
+    sort_type.remove(sort_now)
+    if request.GET.get('sort', 'create_time') == 'create_time':
+        linklist = linklist.order_by('-id')
+    elif request.GET.get('sort', 'create_time') == 'title':
+        linklist = linklist.order_by('title')
 
     folders = Genre.objects.filter(parent=folder_now).order_by('name')
 
@@ -57,9 +65,9 @@ def mylinks(request):
     # ----------tag 处理开始---------------
     # if linklist.count()>0:
     # if request.GET.get('tag', None) is not None:
-    #         query_tag_list = request.GET.get('tag').split('*t*')
-    #         for aaa in query_tag_list:
-    #             linklist = linklist.filter(tags__contains=aaa)
+    # query_tag_list = request.GET.get('tag').split('*t*')
+    # for aaa in query_tag_list:
+    # linklist = linklist.filter(tags__contains=aaa)
     #
     #     tagset = set(reduce(lambda x, y: x + y, linklist.values_list('tags')))
     #     if None in tagset:
@@ -109,6 +117,11 @@ def detail(request):
     link = get_object_or_404(Blog, id=request.GET.get('linkid', 0))
     if link.user != request.user and link.is_public == False:
         return HttpResponse(u"无权限")
+    if request.method == 'POST':
+        new_comment = Comments.objects.create(user=request.user,
+                                              blog=link,
+                                              content=request.POST.get('comment', None))
+    comments = Comments.objects.filter(blog=link).order_by('-id')
     return render(request, 'appmain/detail.html', locals())
 
 

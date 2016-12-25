@@ -1,7 +1,7 @@
 {% extends 'appmain/base.html' %}
 {% load markdown_deux_tags %}
 
-{% load comments %}
+
 {% block title %}detail{% endblock %}
 {% block css %}
 
@@ -57,13 +57,24 @@
     <div class="row">
         <div class="col-sm-12 detailcard">
             {% if request.user.username %}
-                {% render_comment_form for link %}
+                <form role="form" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="comment" style="font-weight: lighter">comment</label>
+                        <textarea name="comment"
+                                  class="form-control" id="comment"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-default">评论</button>
+                </form>
             {% else %}
                 <div class="well">登录后评论</div>
             {% endif %}
-            {% render_comment_list for link %}
 
-
+            {% for aaa in comments %}
+                <p class="text-muted">{{ aaa.user }}</p>
+                {{ aaa.content }}
+            {% endfor %}
         </div>
     </div>
 
