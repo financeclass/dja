@@ -9,15 +9,36 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from functools import reduce
 
-# import sys
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 default_channel = [u'电影', u'音乐', u'小说', u'编程', ]
 
 icon_dict = {u'电影': 'film', u'音乐': 'music', u'小说': 'pencil-square', u'编程': 'code'}
 
+search_box_default='''
+百度
+https://baidu.com
+https://www.baidu.com/s?wd=
+====
+谷歌
+http://gufenso.coderschool.cn/
+http://google.gunn.cn/#q=
+====
+豆瓣
+https://www.douban.com/
+https://www.douban.com/search?q=
+====
+知乎
+https://www.zhihu.com/explore
+https://www.zhihu.com/search?type=content&q=
+====
+淘宝
+https://www.taobao.com/
+https://s.taobao.com/search?q=
+'''
 
 def index(request):
     return HttpResponse(u"welcome!  欢迎光临!")
@@ -88,7 +109,22 @@ def home(request):
     channellist_local = [{'channel_name': aaa, 'channel_icon': icon_dict.get(aaa, 'angle-down')}
                          for aaa in default_channel]
     linklist = [['1']]
+    try:
+        search_box = Profile.objects.get(user=request.user).search_box
+        if search_box == 'default':
+            search_box=search_box_default
+    except Exception as e:
+        search_box=search_box_default
+
+    search_box = search_box.split('====')
+    search_box= [aa.strip().replace('\r\n','\n').split('\n') for aa in search_box]
+    print(search_box)
+    for ii,aaa in enumerate(search_box):
+        search_box[ii]=['box'+str(ii)]+aaa
+
     if request.user.is_authenticated():
+
+
         try:
             userchannel = Profile.objects.get(user=request.user).channel_chosen
             if userchannel != 'default':
@@ -195,11 +231,12 @@ def profileset(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST)
         if form.is_valid():
-            Profile.objects.filter(user=request.user).update(channel_chosen=form.cleaned_data['channel_chosen'])
+            Profile.objects.filter(user=request.user).update(channel_chosen=form.cleaned_data['channel_chosen'],
+                                                             search_box=form.cleaned_data['search_box'])
             return HttpResponseRedirect("/space/")
     else:
         form = ProfileForm(instance=Profile.objects.get_or_create(user=request.user)[0])
-        return render(request, 'appmain/mark.html', locals())
+        return render(request, 'appmain/profile.html', locals())
 
 
 # --------------- register ------------------

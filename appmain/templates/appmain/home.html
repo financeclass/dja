@@ -85,7 +85,7 @@
 {% block content %}
 
 
-{% include 'appmain/searchbox.html' %}
+    {% include 'appmain/searchbox.html' %}
 
 
     <div class="row">
@@ -155,4 +155,24 @@
 
 {% endblock %}
 
+{% block js %}
 
+    <script>{% for aa in search_box %}
+        $('#sinput').bind('input propertychange', function () {
+            if (document.getElementById("sinput").value.length > 0) {
+                document.getElementById("{{ aa|mytag_getkey:0 }}").href
+                        = "{{ aa|mytag_getkey:3 }}" + document.getElementById("sinput").value
+            } else {
+                document.getElementById("image1").href = "{{ aa|mytag_getkey:2 }}"
+            }
+
+        }).bind('input input', function () {
+            if (document.getElementById("sinput").value.length > 0) {
+                document.getElementById("{{ aa|mytag_getkey:0 }}").href
+                        = "{{ aa|mytag_getkey:3 }}" + document.getElementById("sinput").value
+            } else {
+                document.getElementById("image1").href = "{{ aa|mytag_getkey:2 }}"
+            }
+        });{% endfor %}
+    </script>
+{% endblock %}

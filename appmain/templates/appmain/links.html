@@ -27,24 +27,24 @@
     <div class="row">
         <div class="col-sm-12" style="margin-bottom: 10px">
             {% if thetype == 'mylinks' %}
-                <div class="btn-group" style="float: left">
-                    <a href="{{ request.path|mytag_striptag }}" type="button"
-                       class="btn btn-default">All<i class="fa fa-tag fa-fw"></i></a>
-
-
-                    {% for aa in query_tag_list %}
-                        <button type="button"
-                                class="btn btn-danger disabled">{{ aa }}</button>
-                    {% endfor %}
-                    {% for aa in tags %}
-                        <a href="{{ request.get_full_path|mytag_addtag:aa }}" type="button"
-                           class="btn btn-default">{{ aa }}</a>
-                    {% endfor %}
-                </div>
+{#                <div class="btn-group" style="float: left">#}
+{#                    <a href="{{ request.path|mytag_striptag }}" type="button"#}
+{#                       class="btn btn-default">All<i class="fa fa-tag fa-fw"></i></a>#}
+{##}
+{##}
+{#                    {% for aa in query_tag_list %}#}
+{#                        <button type="button"#}
+{#                                class="btn btn-danger disabled">{{ aa }}</button>#}
+{#                    {% endfor %}#}
+{#                    {% for aa in tags %}#}
+{#                        <a href="{{ request.get_full_path|mytag_addtag:aa }}" type="button"#}
+{#                           class="btn btn-default">{{ aa }}</a>#}
+{#                    {% endfor %}#}
+{#                </div>#}
                 <div class="dropdown  " style="float: right">
                     <button type="button" class="btn dropdown-toggle btn-default"
-                            id="dropdownMenu1" data-toggle="dropdown">排序：{{ sort_now }}
-                        <span class="caret"></span>
+                            id="dropdownMenu1" data-toggle="dropdown"><i class="fa fa-sort fa-fw"></i> {{ sort_now }}
+
                     </button>
                     <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
                         {% for aa in sort_type %}

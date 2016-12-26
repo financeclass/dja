@@ -63,8 +63,8 @@ class css_crawl(models.Model):
     default_onpage = models.BooleanField(default=True)
 
 
-def __str__(self):
-    return self.name
+    def __str__(self):
+        return self.name
 
 
 @python_2_unicode_compatible
@@ -132,15 +132,30 @@ class BlogForm(ModelForm):
         self.fields['title'].label = '标题'
         self.fields['is_public'].label = '是否公开'
 
-
+search_box_help='''
+<p class="text-muted">举例：</p>
+<p class="text-muted">百度</p>
+<p class="text-muted">https://baidu.com</p>
+<p class="text-muted">https://www.baidu.com/s?wd=</p>
+<p class="text-muted">====</p>
+<p class="text-muted">知乎</p>
+<p class="text-muted">https://www.zhihu.com/explore</p>
+<p class="text-muted">https://www.zhihu.com/search?type=content&q=</p>
+'''
 class ProfileForm(ModelForm):
     class Meta:
         model = Profile
         fields = ('channel_chosen','search_box')
+        widgets = {'search_box': Textarea(attrs={'class': 'form-control'}),
+                   'channel_chosen': TextInput(attrs={'class': 'form-control' },
+                                               ),
+                   }
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
         self.fields['channel_chosen'].required = False
         self.fields['channel_chosen'].label = '频道选择'
+        self.fields['channel_chosen'].help_text = '<p class="text-muted">举例：</p><p class="text-muted">电影，动漫，小说</p>'
         self.fields['search_box'].required = False
         self.fields['search_box'].label = '搜索设置'
+        self.fields['search_box'].help_text = search_box_help
