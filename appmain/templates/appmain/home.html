@@ -5,14 +5,20 @@
 
 {% block css %}
     <style type="text/css">
+    .form-control:focus {
+
+    border-color: rgba(71, 71, 71, 0.48);
+    box-shadow: 0 0 5px rgba(71, 71, 71, 0.34);
+    border-radius: 1px;
+}
 
         .search {
             margin-bottom: 10px
         }
 
         .mcard {
-            background: rgba(249, 250, 250, 0.91) url('/static/appmain/boxpic.jpg') repeat;
-            box-shadow: 2px 2px rgba(173, 173, 173, 0.36);
+            background: rgba(253, 253, 254, 0.91);
+            box-shadow:1px 1px 1px 1px  rgba(173, 173, 173, 0.36);
             padding: 0 7px;
             margin: 5px;
         }
@@ -99,12 +105,7 @@
 
                         <p>消息提醒</p>
 
-                        <hr>
-                        <a href="/space/" style="color: #7b7b7b">
-                            <div>
-                                <div class="more"><i class="fa  fa-angle-right fa-fw"></i></div>
-                            </div>
-                        </a>
+
                     </div>
                 {% else %}
 
@@ -116,10 +117,10 @@
                         </a></h4>
                         {% for aa in bb|last %}
 
-                            <a class="linktitle" href="/detail/?linkid={{ aa.id }}" target="_blank">
+                            <a class="linktitle visited" href="/detail/?linkid={{ aa.id }}" target="_blank">
                                 {{ aa.title }} </a>
                             {% if aa.url %}
-                                <a class="titleurl" href="{{ aa.url }}" target="_blank">
+                                <a class="titleurl " href="{{ aa.url }}" target="_blank">
                                     &nbsp;&nbsp;{{ aa.url|mytag_link_split }}
                                     <i style="font-size: 1.5em;" class="fa fa-link fa-fw"></i></a>{% endif %}
 
@@ -135,14 +136,10 @@
                                         class="fa fa-heart-o fa-fw"></i></a>
                             {% endif %}
 
-
-                            <hr>
+{% if forloop.counter == 4 %}
+                            {% else %}<hr>{% endif %}
                         {% endfor %}
-                        <a href="/links/?channel={{ bb|first|mytag_getkey:'channel_name' }}" style="color: #7b7b7b">
-                            <div>
-                                <div class="more"><i class="fa  fa-angle-right fa-fw"></i></div>
-                            </div>
-                        </a>
+
                     </div>{% endif %}
             </div>
             {% if  forloop.counter|divisibleby:"3" %}</div>
@@ -160,10 +157,12 @@
     <script>{% for aa in search_box %}
         $('#sinput').bind('input propertychange', function () {
             if (document.getElementById("sinput").value.length > 0) {
+
                 document.getElementById("{{ aa|mytag_getkey:0 }}").href
                         = "{{ aa|mytag_getkey:3 }}" + document.getElementById("sinput").value
             } else {
-                document.getElementById("image1").href = "{{ aa|mytag_getkey:2 }}"
+
+                document.getElementById("{{ aa|mytag_getkey:0 }}").href = "{{ aa|mytag_getkey:2 }}"
             }
 
         }).bind('input input', function () {
@@ -171,8 +170,20 @@
                 document.getElementById("{{ aa|mytag_getkey:0 }}").href
                         = "{{ aa|mytag_getkey:3 }}" + document.getElementById("sinput").value
             } else {
-                document.getElementById("image1").href = "{{ aa|mytag_getkey:2 }}"
+                document.getElementById("{{ aa|mytag_getkey:0 }}").href = "{{ aa|mytag_getkey:2 }}"
             }
         });{% endfor %}
+    $(document).ready(
+            function() {
+                $("#sinput").keydown(function(event) {
+                    if (event.keyCode == 13) {
+
+
+                        window.open(document.getElementById("box0").href);
+
+                    }
+                })
+            }
+        );
     </script>
 {% endblock %}

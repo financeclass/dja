@@ -12,4 +12,5 @@ class blogAdmin(admin.ModelAdmin):
 admin.site.register(Person)
 admin.site.register(Genre)
 admin.site.register(css_crawl)
+admin.site.register(Channel)
 admin.site.register(Blog, blogAdmin)

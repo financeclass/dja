@@ -33,4 +33,5 @@ urlpatterns = [
     url(r'^userlogout/', appmain_views.userlogout),
     url(r'^profileset/', appmain_views.profileset),
     url(r'^create_folder/', appmain_views.create_folder),
+    url(r'^audit/', appmain_views.audit),
 ]
